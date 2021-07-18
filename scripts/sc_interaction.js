@@ -9,12 +9,26 @@ const InputDataDecoder = require('ethereum-input-data-decoder');
 const rawDenarisAbi = fs.readFileSync("denarisAbi.json");
 const contractDenarisAbi = JSON.parse(rawDenarisAbi);
 
+const rawUniswapV2FactoryAbi = fs.readFileSync("uniswapV2FactoryAbi.json");
+const contractUniswapV2FactoryAbi = JSON.parse(rawUniswapV2FactoryAbi);
+
+const rawUniswapV2Router02Abi = fs.readFileSync("uniswapV2Router02Abi.json");
+const contractUniswapV2Router02Abi = JSON.parse(rawUniswapV2Router02Abi);
+
+const rawPancakeRouterAbi = fs.readFileSync("uniswapV2Router02Abi.json");
+const contractPancakeRouterAbi = JSON.parse(rawPancakeRouterAbi);
+
 const denarisAddress = "0xb1c7bC091BE121af3Bf53a37ef21287D61Dfe697";
+const wbnbAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
+
 const myAddress = "0x6F3eC0115A6aB1b91B6487b1889a3435b5D4DabE";
 const myPrivKey = "65e680d361d67e60198b6728cd4fbe22178b6651f9115410d0266f1d957b3f8d";
 const testAddress = "0xE8AB21130d7F8Cc4093dA53170625510b55E9b21";
 const testPrivKey = "0x5e0e0de1979176d3813e5cb8451d935e6b35ae99071d9856c67a7cf405f1f1e6";
 const randomPrivKey = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d960fe8709";
+
+const pancakeFactory = "0x6725F303b657a9451d8BA641348b6761A6CC7a17";
+const pancakeRouter = "0xD99D1c33F9fC3444f8101754aBC46c52416550D1";
 
 const getChainNumber = ({ blockchain, network }) => {
   switch(blockchain){
@@ -200,34 +214,43 @@ const GetAddressBalance = async (options) => {
 
 const TransferDenaris = async (options) => {
   let web3 = new Web3(getNetworkEndpoint(options));
-  web3.eth.defaultAccount = options.from;
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));  
 
   const contractInstanceAddress = web3.utils.toChecksumAddress(denarisAddress);
 
   const contractInstance = new web3.eth.Contract(contractDenarisAbi, contractInstanceAddress);
 
+  const count = await web3.eth.getTransactionCount(options.from);
+
   const contractOptions = {
     from: options.from,
-    gasPrice: "20000000000",
-    gas: 21000,
-    value: "0" // wei
+    value: "0x00",
+    gasLimit: "0x30D40",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
   }
   
-  await contractInstance.methods.transfer(options.to, options.tokenAmount).send(contractOptions)
-  .on('transactionHash', function(hash){
-    consolelog(hash);
-  })
-  .on('confirmation', function(confirmationNumber, receipt){
-    consolelog(confirmationNumber);
-    consolelog(receipt);
-  })
-  .on('receipt', function(receipt){
-      console.log(receipt);
-  })
-  .on('error', function(error, receipt) {
-      console.log(error);
-      console.log(receipt);
+  return contractInstance.methods.transfer(options.to, options.tokenAmount).send(contractOptions)
+  .once('sent', function(payload){
+    console.log(payload)
   });
+  // .on('transactionHash', function(hash){
+  //   console.log(hash);
+  //   web3.eth.accounts.wallet.clear();
+  // })
+  // .once('confirmation', function(confirmationNumber, receipt){
+  //   console.log(confirmationNumber);
+  //   console.log(receipt);
+  // })
+  // .once('receipt', function(receipt){
+  //     console.log(receipt);
+  // })
+  // .on('error', function(error, receipt) {
+  //     console.log(error);
+  //     console.log(receipt);
+  //     web3.eth.accounts.wallet.clear();
+  // });
 };
 
 const SendDenaris = async (options) => {
@@ -278,6 +301,259 @@ const SendDenaris = async (options) => {
   // .on('error', function(error){ console.log(error) })
 };
 
+const CreatePair = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));  
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.factoryAddress);
+  const contractInstance = new web3.eth.Contract(contractUniswapV2FactoryAbi, contractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  const contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x30D40",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  
+  return contractInstance.methods.createPair(options.tokenA, options.tokenB).send(contractOptions)
+  .once('sent', function(payload){
+    console.log(payload)
+  });
+}
+
+const GetPoolPairAddress = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));  
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.factoryAddress);
+  const contractInstance = new web3.eth.Contract(contractUniswapV2FactoryAbi, contractInstanceAddress);
+
+  const contractOptions = {
+    from: options.from
+  }
+  
+  return contractInstance.methods.getPair(options.tokenA, options.tokenB).call(contractOptions);
+}
+
+const AddLiquidityETH = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const tokenContractInstanceAddress = web3.utils.toChecksumAddress(options.addLiquidityETH.tokenAddress);
+  const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
+  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  // First, give allowance to router
+  let contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  let res = await tokenContractInstance.methods.approve(
+    options.routerAddress,
+    options.addLiquidityETH.amountToken
+  ).send(contractOptions);
+
+  console.log(res);
+
+  // Second, add liquidity
+
+  contractOptions = {
+    from: options.from,
+    value: web3.utils.toHex(web3.utils.toWei(options.addLiquidityETH.amountETH.toString())),
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count+1), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  /* inputs
+  [
+    {"internalType":"address","name":"token","type":"address"},
+    {"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},
+    {"internalType":"uint256","name":"amountTokenMin","type":"uint256"},
+    {"internalType":"uint256","name":"amountETHMin","type":"uint256"},
+    {"internalType":"address","name":"to","type":"address"},
+    {"internalType":"uint256","name":"deadline","type":"uint256"}]
+  */
+  return contractInstance.methods.addLiquidityETH(
+    options.addLiquidityETH.tokenAddress,
+    options.addLiquidityETH.amountToken,
+    options.addLiquidityETH.amountTokenMin,
+    web3.utils.toWei(options.addLiquidityETH.amountETHMin.toString()),
+    options.addLiquidityETH.to,
+    options.addLiquidityETH.deadline
+  ).send(contractOptions);
+}
+
+const RemoveLiquidityETH = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const tokenContractInstanceAddress = web3.utils.toChecksumAddress(options.removeLiquidityETH.tokenAddress);
+  const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
+  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  // No need to give allowance to router
+
+  // Second, remove liquidity
+
+  contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  /* inputs
+  [
+    {"internalType":"address","name":"token","type":"address"},
+    {"internalType":"uint256","name":"liquidity","type":"uint256"},
+    {"internalType":"uint256","name":"amountTokenMin","type":"uint256"},
+    {"internalType":"uint256","name":"amountETHMin","type":"uint256"},
+    {"internalType":"address","name":"to","type":"address"},
+    {"internalType":"uint256","name":"deadline","type":"uint256"}
+  ]
+  */
+  return contractInstance.methods.removeLiquidityETH(
+    options.removeLiquidityETH.tokenAddress,
+    options.removeLiquidityETH.amountLP,
+    options.removeLiquidityETH.amountTokenMin,
+    web3.utils.toWei(options.addLiquidityETH.amountETHMin.toString()),
+    options.removeLiquidityETH.to,
+    options.removeLiquidityETH.deadline
+  ).send(contractOptions);
+}
+
+
+const SwapExactETHForTokens = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
+  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  // First, no need to give allowance!
+
+  // Second, swap!
+
+  contractOptions = {
+    from: options.from,
+    value: web3.utils.toHex(web3.utils.toWei(options.swapExactETHForTokens.amountETH.toString())),
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  return contractInstance.methods.swapExactETHForTokens(
+    options.swapExactETHForTokens.amountOutMin,
+    options.swapExactETHForTokens.path,
+    options.swapExactETHForTokens.to,
+    options.swapExactETHForTokens.deadline
+  ).send(contractOptions)
+  .once('sending', function(payload){ console.log(payload) })
+  .once('sent', function(payload){ console.log(payload) })
+  .once('transactionHash', function(hash){ console.log(hash) })
+  .once('receipt', function(receipt){ console.log(receipt) })
+  .on('confirmation', function(confNumber, receipt, latestBlockHash){ console.log(confNumber);console.log(receipt);console.log(latestBlockHash); })
+  .on('error', function(error){ console.log(error) })
+}
+
+const SwapExactTokensForETH = async (options) => {
+
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const tokenContractInstanceAddress = web3.utils.toChecksumAddress(options.swapExactTokensForETH.tokenAddress);
+  const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
+
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
+  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  // First, give allowance to router
+
+  let contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  let res = await tokenContractInstance.methods.approve(
+    options.routerAddress,
+    options.swapExactTokensForETH.amountToken
+  ).send(contractOptions);
+
+  console.log(res);
+
+  // Second, swap!
+
+  contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x989680",
+    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count+1), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+  /* inputs
+  [
+    {"internalType":"uint256","name":"amountIn","type":"uint256"},
+    {"internalType":"uint256","name":"amountOutMin","type":"uint256"},
+    {"internalType":"address[]","name":"path","type":"address[]"},
+    {"internalType":"address","name":"to","type":"address"},
+    {"internalType":"uint256","name":"deadline","type":"uint256"}]
+  */
+  return contractInstance.methods.swapExactTokensForETH(
+    options.swapExactTokensForETH.amountToken,
+    web3.utils.toWei(options.swapExactTokensForETH.amountETHMin.toString()),
+    options.swapExactTokensForETH.path,
+    options.swapExactTokensForETH.to,
+    options.swapExactTokensForETH.deadline
+  ).send(contractOptions)
+  // .once('sending', function(payload){ console.log(payload) })
+  .once('sent', function(payload){ console.log(payload) })
+  // .once('transactionHash', function(hash){ console.log(hash) })
+  // .once('receipt', function(receipt){ console.log(receipt) })
+  // .on('confirmation', function(confNumber, receipt, latestBlockHash){ console.log(confNumber);console.log(receipt);console.log(latestBlockHash); })
+  // .on('error', function(error){ console.log(error) })
+}
+
+const GetAllowance = async (options) => {
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const tokenContractInstanceAddress = web3.utils.toChecksumAddress(options.allowance.tokenAddress);
+  const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
+
+  return await tokenContractInstance.methods.allowance(options.from, options.allowance.spender).call();  
+}
+
 const options = {
   blockchain: "binance",
   network: "testnet",
@@ -285,9 +561,67 @@ const options = {
   to: testAddress,
   amount: 0,
   tokenAmount: 1000000,
-  privKey: myPrivKey
+  privKey: myPrivKey,
+  factoryAddress: pancakeFactory,
+  routerAddress: pancakeRouter,
+  tokenA: denarisAddress,
+  tokenB: wbnbAddress,
+  allowance: {
+    tokenAddress: denarisAddress,
+    spender: pancakeRouter
+  },
+  addLiquidityETH: {
+    tokenAddress: denarisAddress,
+    amountETH: 0.1,
+    amountToken: 1000000000,
+    amountTokenMin: 1000,
+    amountETHMin: 0.0001,
+    to: myAddress,
+    deadline: Date.now() + 60*1000*60*24, // 1 day
+  },
+  removeLiquidityETH: {
+    tokenAddress: denarisAddress,
+    amountLP: 10,
+    amountTokenMin: 1,
+    amountETHMin: 0.0000000000001,
+    to: myAddress,
+    deadline: Date.now() + 60*1000*60*24, // 1 day
+  },
+  swapExactETHForTokens: {
+    amountETH: 0.01,
+    amountOutMin: 100,
+    // An array of token addresses. path.length must be >= 2. Pools for each consecutive pair of addresses must exist and have liquidity.
+    path: [
+      wbnbAddress,
+      denarisAddress,
+    ],
+    to: myAddress,
+    deadline: Date.now() + 60*1000*60*24, // 1 day
+  },
+  swapExactTokensForETH: {
+    amountToken: 1000000,
+    amountETHMin: 0.001,
+    tokenAddress: denarisAddress,
+    // An array of token addresses. path.length must be >= 2. Pools for each consecutive pair of addresses must exist and have liquidity.
+    path: [
+      denarisAddress,
+      wbnbAddress,
+    ],
+    to: myAddress,
+    deadline: Date.now() + 60*1000*60*24, // 1 day
+  }
 };
 
-SendDenaris(options)
+// GetAddressBalance(options)
+// TransferDenaris(options)
+// SendDenaris(options)
+// GetAllowance(options)
+// CreatePair(options)
+// GetPoolPairAddress(options) // 0x814346FcAD3c4DB287fc6C1853c840ebE6F17A65
+// AddLiquidityETH(options)
+RemoveLiquidityETH(options)
+// SwapExactETHForTokens(options)
+// SwapExactETHForTokens(options)
+// SwapExactTokensForETH(options)
 .then(console.log)
 .catch(console.log);
