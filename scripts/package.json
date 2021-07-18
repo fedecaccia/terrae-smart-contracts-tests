@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sc_interaction.js",
+  "scripts": {
+    "dev": "node sc_interaction.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bignumber.js": "^9.0.0",
+    "dotenv": "^10.0.0",
+    "ethereum-input-data-decoder": "^0.3.2",
+    "ethereumjs-tx": "^2.1.2",
+    "node-fetch": "^2.6.0",
+    "web3": "^1.2.11"
+  }
+}
