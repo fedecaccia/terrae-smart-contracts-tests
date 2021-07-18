@@ -572,18 +572,18 @@ const options = {
   },
   addLiquidityETH: {
     tokenAddress: denarisAddress,
-    amountETH: 0.1,
-    amountToken: 1000000000,
-    amountTokenMin: 1000,
+    amountETH: 1,
+    amountToken: 100000000000,
+    amountTokenMin: 10000000,
     amountETHMin: 0.0001,
     to: myAddress,
     deadline: Date.now() + 60*1000*60*24, // 1 day
   },
   removeLiquidityETH: {
     tokenAddress: denarisAddress,
-    amountLP: 10,
-    amountTokenMin: 1,
-    amountETHMin: 0.0000000000001,
+    amountLP: 2082440000000,
+    amountTokenMin: 10000,
+    amountETHMin: 0.0000000000000001,
     to: myAddress,
     deadline: Date.now() + 60*1000*60*24, // 1 day
   },
@@ -599,8 +599,8 @@ const options = {
     deadline: Date.now() + 60*1000*60*24, // 1 day
   },
   swapExactTokensForETH: {
-    amountToken: 1000000,
-    amountETHMin: 0.001,
+    amountToken: 10000000000,
+    amountETHMin: 0.0001,
     tokenAddress: denarisAddress,
     // An array of token addresses. path.length must be >= 2. Pools for each consecutive pair of addresses must exist and have liquidity.
     path: [
@@ -620,7 +620,6 @@ const options = {
 // GetPoolPairAddress(options) // 0x814346FcAD3c4DB287fc6C1853c840ebE6F17A65
 // AddLiquidityETH(options)
 RemoveLiquidityETH(options)
-// SwapExactETHForTokens(options)
 // SwapExactETHForTokens(options)
 // SwapExactTokensForETH(options)
 .then(console.log)
