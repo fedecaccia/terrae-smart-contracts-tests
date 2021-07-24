@@ -54,7 +54,7 @@ contract TerraeFarm is Ownable {
     userLastRewardedBlock[msg.sender] = block.number;
 
     for (uint256 i=0; i<rewardResources.length; i++) {
-      uint256 amountToHarvest = deltaBlocks * rewardsPerBlock[i] * userStake[msg.sender];
+      uint256 amountToHarvest = deltaBlocks * rewardsPerBlock[i] * (userStake[msg.sender]/(1 ether));
 
       ERC20PresetMinterPauser(rewardResources[i]).transfer(msg.sender, amountToHarvest);
     }
@@ -75,7 +75,7 @@ contract TerraeFarm is Ownable {
 
   function getAddressReward(uint256 resourceType, address account) public view returns(string memory, uint256) {
     uint256 deltaBlocks = block.number - userLastRewardedBlock[msg.sender];    
-    uint256 amountToHarvest = deltaBlocks * rewardsPerBlock[resourceType] * userStake[account];
+    uint256 amountToHarvest = deltaBlocks * rewardsPerBlock[resourceType] * (userStake[account]/(1 ether));
     string memory symbol = ERC20PresetMinterPauser(rewardResources[resourceType]).symbol();
     return (symbol, amountToHarvest);
   }
