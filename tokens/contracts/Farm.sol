@@ -73,10 +73,11 @@ contract TerraeFarm is Ownable {
     DENARISToken(stakeResourceAddress).transfer(msg.sender, amount);
   }
 
-  function getAddressReward(uint256 resourceType, address account) public view returns(uint256) {
+  function getAddressReward(uint256 resourceType, address account) public view returns(string memory, uint256) {
     uint256 deltaBlocks = block.number - userLastRewardedBlock[msg.sender];    
     uint256 amountToHarvest = deltaBlocks * rewardsPerBlock[resourceType] * userStake[account];
-    return amountToHarvest;
+    string memory symbol = ERC20PresetMinterPauser(rewardResources[resourceType]).symbol();
+    return (symbol, amountToHarvest);
   }
 
   function getAddressStake(address account) public view returns(uint256) {    
