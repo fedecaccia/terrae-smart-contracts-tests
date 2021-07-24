@@ -619,8 +619,8 @@ const options = {
 // CreatePair(options)
 // GetPoolPairAddress(options) // 0x814346FcAD3c4DB287fc6C1853c840ebE6F17A65
 // AddLiquidityETH(options)
-RemoveLiquidityETH(options)
-// SwapExactETHForTokens(options)
+// RemoveLiquidityETH(options)
+SwapExactETHForTokens(options)
 // SwapExactTokensForETH(options)
 .then(console.log)
 .catch(console.log);
