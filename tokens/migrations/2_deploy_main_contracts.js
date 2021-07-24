@@ -21,8 +21,8 @@ module.exports = async (deployer, network, accounts) => {
   await deployer.deploy(Resource, 0, "TerraeRuby", "TRBY"); // 0
   const contractRubyInstance = await Resource.deployed();
 
-  await deployer.deploy(Farm, contractDenarisInstance.address, "Gold Farm", [contractGoldInstance.address], [40000]);
-  await deployer.deploy(Farm, contractDenarisInstance.address, "Emerald Farm", [contractEmeraldInstance.address], [40000]);
-  await deployer.deploy(Farm, contractDenarisInstance.address, "Sapphire Farm", [contractSapphireInstance.address], [40000]);
-  await deployer.deploy(Farm, contractDenarisInstance.address, "Ruby Farm", [contractRubyInstance.address], [40000]);
+  await deployer.deploy(Farm, contractDenarisInstance.address, "Gold Farm", [contractGoldInstance.address], ["15000000000000000"]);
+  await deployer.deploy(Farm, contractDenarisInstance.address, "Emerald Farm", [contractEmeraldInstance.address], ["15000000000000000"]);
+  await deployer.deploy(Farm, contractDenarisInstance.address, "Sapphire Farm", [contractSapphireInstance.address], ["15000000000000000"]);
+  await deployer.deploy(Farm, contractDenarisInstance.address, "Ruby Farm", [contractRubyInstance.address], ["15000000000000000"]);
 };

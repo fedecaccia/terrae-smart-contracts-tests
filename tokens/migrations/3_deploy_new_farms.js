@@ -2,9 +2,6 @@ const Denaris = artifacts.require("DENARISToken");
 const Resource = artifacts.require("TerraeResource");
 const Farm = artifacts.require("TerraeFarm");
 
-// Farm constructor
-// address _stakeResourceAddress, string memory _name, address[] memory resources, uint256[] memory rewards)
-
 module.exports = async (deployer, network, accounts) => {
 
   contractDenarisInstance = { address: "0xceadbb9ef26f4e41a0e8d48940779af89695ff55" }
