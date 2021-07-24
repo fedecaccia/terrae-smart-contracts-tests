@@ -1,10 +1,13 @@
 # Terrae
 
+Terrae is a Massive Multiplayer Online (MMO) strategy game, based on a medieval word. All assets (natural and monetary resources, armies, buildings and others), are registered on blockchain in a decentralized way, with no server intervention. Players become real owners of their in game assets. Thanks that, they are able to trade valuated assets like (NFT warriors or yield farming positions) and so, monetize their progress.
+
 ## Deploy Smart Contracts
 
-Needs to be working on `one of `{denaris, resources}` directory.
-
-- Install Truffle and dependencies
+- Install Truffle and other dependencies
+```
+npm install
+```
 
 - Compile smart contracts:
 
