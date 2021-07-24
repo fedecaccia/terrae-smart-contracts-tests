@@ -18,7 +18,7 @@ const contractUniswapV2Router02Abi = JSON.parse(rawUniswapV2Router02Abi);
 const rawPancakeRouterAbi = fs.readFileSync("uniswapV2Router02Abi.json");
 const contractPancakeRouterAbi = JSON.parse(rawPancakeRouterAbi);
 
-const denarisAddress = "0xb1c7bC091BE121af3Bf53a37ef21287D61Dfe697";
+const denarisAddress = "0xceadbb9ef26f4e41a0e8d48940779af89695ff55";
 const wbnbAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
 
 const myAddress = "0x6F3eC0115A6aB1b91B6487b1889a3435b5D4DabE";
@@ -111,6 +111,7 @@ const SignTransaction = async (options) => {
     to: options.to,
     value: options.amount,
     gas: 2000000,
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
     // gasPrice: "234567897654321", // default will use web3.eth.getGasPrice()
     // nonce: 0, // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
@@ -126,6 +127,7 @@ const SendSignedTransaction = async (options) => {
     to: options.to,
     value: options.amount,
     gasLimit: 2000000,
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
     // gasPrice: "234567897654321", // default will use web3.eth.getGasPrice()
     // nonce: 0, // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
@@ -226,7 +228,8 @@ const TransferDenaris = async (options) => {
     from: options.from,
     value: "0x00",
     gasLimit: "0x30D40",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -271,7 +274,8 @@ const SendDenaris = async (options) => {
     to: denarisAddress,
     value: "0x00",
     gasLimit: "0x30D40",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
     data: encoded
@@ -314,8 +318,9 @@ const CreatePair = async (options) => {
   const contractOptions = {
     from: options.from,
     value: "0x00",
-    gasLimit: "0x30D40",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasLimit: "0x989680",
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -359,7 +364,8 @@ const AddLiquidityETH = async (options) => {
     from: options.from,
     value: "0x00",
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -376,7 +382,8 @@ const AddLiquidityETH = async (options) => {
     from: options.from,
     value: web3.utils.toHex(web3.utils.toWei(options.addLiquidityETH.amountETH.toString())),
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count+1), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -420,7 +427,8 @@ const RemoveLiquidityETH = async (options) => {
     from: options.from,
     value: "0x00",
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -463,7 +471,8 @@ const SwapExactETHForTokens = async (options) => {
     from: options.from,
     value: web3.utils.toHex(web3.utils.toWei(options.swapExactETHForTokens.amountETH.toString())),
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -500,7 +509,8 @@ const SwapExactTokensForETH = async (options) => {
     from: options.from,
     value: "0x00",
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -517,7 +527,8 @@ const SwapExactTokensForETH = async (options) => {
     from: options.from,
     value: "0x00",
     gasLimit: "0x989680",
-    gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
     nonce: web3.utils.toHex(count+1), // default will use web3.eth.getTransactionCount()
     // chainId: 1, // default will use web3.eth.net.getId()
   }
@@ -616,11 +627,11 @@ const options = {
 // TransferDenaris(options)
 // SendDenaris(options)
 // GetAllowance(options)
-// CreatePair(options)
+CreatePair(options)
 // GetPoolPairAddress(options) // 0x814346FcAD3c4DB287fc6C1853c840ebE6F17A65
 // AddLiquidityETH(options)
 // RemoveLiquidityETH(options)
-SwapExactETHForTokens(options)
+// SwapExactETHForTokens(options)
 // SwapExactTokensForETH(options)
 .then(console.log)
 .catch(console.log);

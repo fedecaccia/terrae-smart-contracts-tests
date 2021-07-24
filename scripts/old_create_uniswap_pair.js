@@ -19,7 +19,7 @@ Router: 0xD99D1c33F9fC3444f8101754aBC46c52416550D1
 */
 
 
-const denaris = "0xb1c7bC091BE121af3Bf53a37ef21287D61Dfe697";
+const denaris = "0xceadbb9ef26f4e41a0e8d48940779af89695ff55";
 const wbnb = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c';
 
 
