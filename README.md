@@ -4,7 +4,7 @@ Terrae is a Massive Multiplayer Online (MMO) strategy game, based on a medieval 
 
 ## Live version
 
-Visit (terraegame.com)[https://terraegame.com]
+Visit [terraegame.com](https://terraegame.com)
 
 ## Deploy Smart Contracts
 
@@ -31,7 +31,7 @@ truffle migrate --network <rinkeby|tbinance|...>
 truffle test
 ```
 
-## Contracts current deployments
+## Contracts Current Deployments
 
 ### Denaris:
 0xceadbb9ef26f4e41a0e8d48940779af89695ff55
