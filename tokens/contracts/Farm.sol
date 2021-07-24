@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 
 import "./openzeppelin-contracts/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
 import "./openzeppelin-contracts/contracts/access/Ownable.sol";
-import "./Denaris.sol";
 import "./openzeppelin-contracts/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
+import "./Denaris.sol";
 
 // CAUTION
 // This version of ERC20 should only be used with Solidity 0.8 or later,
