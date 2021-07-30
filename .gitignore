@@ -1,6 +1,8 @@
 build
 node_modules/*
 .env
+scripts/.env
+tokens/.env
 .secret
 scripts/node_modules/*
 node_modules

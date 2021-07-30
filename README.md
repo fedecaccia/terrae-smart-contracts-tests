@@ -31,22 +31,55 @@ truffle migrate --network <rinkeby|tbinance|...>
 truffle test
 ```
 
-## Contracts Current Deployments
+## TDEN Pool Pair Creation
+To create the pool pair, use `CreatePair` function in `scripts/sc_interaction.js` script.
+To retrieve the address of the pool pair, use `GetPoolPairAddress` function in `scripts/sc_interaction.js` script.
+The first time you add liquidity to the pool, you will set the price token price, providing a relationship between TDEN and BNB or ETH.
+Execute `AutomatePoolPair` function to complete the hole process, from creating the pair to prividing the liquidity.
+
+## Contracts Current Deployments in testnet BSC
 
 ### Denaris:
 0xceadbb9ef26f4e41a0e8d48940779af89695ff55
 
+### Denaris-BNB Pair Pool:
+0x0a174f9cf22e991565e52243125629448C1d95b3
+
 ### Resources:
-- Gold: 0xD6E915Ec2991e6ED27B70e6f14BBBFcB82BBD8Eb
-- Emerald: 0x403F32c7E8b8dB7a8fFA52b183746C0b29f33570
-- Sapphire: 0xb4a2826fC5Da2b8385a3a154960efB1e450065d1
-- Ruby: 0xC05101497AE24241cE8494866F1e000b49921117
+- Gold: 0xE9c642Cf2714bf5d5644704eC61B962109bdC108
+- Emerald: 0x3f30362F09D701D36CEc069b3CC3157006c6c835
+- Sapphire: 0x61F1840941DafA9f8F38F0CD96166c4678633EA5
+- Ruby: 0x64C4fE50F68b9f3eaCdBEce21461fb34eF3b12C9
 
 ### Farms:
-- Gold: 0x29E2A3dBEF571C5e8C35135A99B4aB7b2A983224
-- Emerald: 0xD080348f83864951f5466736734a855c757F0503
-- Sapphire: 0xcCeba5caBa7eBAD6817A14Ffa5e6E0A0553f4199
-- Ruby: 0x764f1A542482382bCd306DF95c42e31aB873E4FC
+- Gold: 0xCc5CA0949ED9a53dF3Eb228ce3Cdd3a74cE86b69
+- Emerald: 0x6D19b36b2E402d66Abd7EC88901EE997eae3f7A4
+- Sapphire: 0x0Ff619471a1E2F8eF89F94A2b2B44875499169Ab
+- Ruby: 0x30ae084dFb90a44eA7574B8634c1F9c4ED6E7715
+
+### Owner:
+- 0x6F3eC0115A6aB1b91B6487b1889a3435b5D4DabE
+
+
+## Contracts Current Deployments in Ribkeby
+
+### Denaris:
+0x13af5Bd11Ae33407b35728135eEEdbb2984fA764
+
+### Denaris-WETH Pair Pool:
+NN
+
+### Resources:
+- Gold: NN
+- Emerald: NN
+- Sapphire: NN
+- Ruby: NN
+
+### Farms:
+- Gold: NN
+- Emerald: NN
+- Sapphire: NN
+- Ruby: NN
 
 ### Owner:
 - 0x6F3eC0115A6aB1b91B6487b1889a3435b5D4DabE

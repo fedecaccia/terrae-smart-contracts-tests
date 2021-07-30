@@ -18,8 +18,14 @@ const contractUniswapV2Router02Abi = JSON.parse(rawUniswapV2Router02Abi);
 const rawPancakeRouterAbi = fs.readFileSync("uniswapV2Router02Abi.json");
 const contractPancakeRouterAbi = JSON.parse(rawPancakeRouterAbi);
 
-const denarisAddress = "0xceadbb9ef26f4e41a0e8d48940779af89695ff55";
+const rawResourceAbi = fs.readFileSync("resourceAbi.json");
+const contractResourceAbi = JSON.parse(rawResourceAbi);
+
+const denarisAddressTBNB = "0xceadbb9ef26f4e41a0e8d48940779af89695ff55";
 const wbnbAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
+
+const denarisAddressRinkeby = "0x13af5Bd11Ae33407b35728135eEEdbb2984fA764";
+const wethAddress = "0xc778417e063141139fce010982780140aa0cd5ab";
 
 const myAddress = "0x6F3eC0115A6aB1b91B6487b1889a3435b5D4DabE";
 const myPrivKey = "65e680d361d67e60198b6728cd4fbe22178b6651f9115410d0266f1d957b3f8d";
@@ -29,6 +35,29 @@ const randomPrivKey = "0x348ce564d427a3311b6536bbcff9390d69395b06ed6c486954e971d
 
 const pancakeFactory = "0x6725F303b657a9451d8BA641348b6761A6CC7a17";
 const pancakeRouter = "0xD99D1c33F9fC3444f8101754aBC46c52416550D1";
+
+const rinkebyFactory = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+const rinkebyRouter = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+const kobanFactory = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+const kobanRouter = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+const ropstenRFactory = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+const ropstenRouter = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
+
+
+const tBinanceFarms = {
+  gold: "0xCc5CA0949ED9a53dF3Eb228ce3Cdd3a74cE86b69",      
+  emerald: "0x6D19b36b2E402d66Abd7EC88901EE997eae3f7A4",
+  sapphire: "0x0Ff619471a1E2F8eF89F94A2b2B44875499169Ab",
+  ruby: "0x30ae084dFb90a44eA7574B8634c1F9c4ED6E7715",      
+};
+const tBinanceResources = {
+  gold: "0xE9c642Cf2714bf5d5644704eC61B962109bdC108",
+  emerald: "0x3f30362F09D701D36CEc069b3CC3157006c6c835",
+  sapphire: "0x61F1840941DafA9f8F38F0CD96166c4678633EA5",
+  ruby: "0x64C4fE50F68b9f3eaCdBEce21461fb34eF3b12C9",
+};
 
 const getChainNumber = ({ blockchain, network }) => {
   switch(blockchain){
@@ -167,7 +196,7 @@ const GetAddressBalance = async (options) => {
   let web3 = new Web3(getNetworkEndpoint(options));
   web3.eth.defaultAccount = options.from;
 
-  const contractInstanceAddress = web3.utils.toChecksumAddress(denarisAddress);
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.denarisAddress);
   const checksummedParamAddress = web3.utils.toChecksumAddress(options.from);
 
   const contractInstance = new web3.eth.Contract(contractDenarisAbi, contractInstanceAddress);
@@ -218,7 +247,7 @@ const TransferDenaris = async (options) => {
   let web3 = new Web3(getNetworkEndpoint(options));
   web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));  
 
-  const contractInstanceAddress = web3.utils.toChecksumAddress(denarisAddress);
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.denarisAddress);
 
   const contractInstance = new web3.eth.Contract(contractDenarisAbi, contractInstanceAddress);
 
@@ -259,7 +288,7 @@ const TransferDenaris = async (options) => {
 const SendDenaris = async (options) => {
   let web3 = new Web3(getNetworkEndpoint(options));
 
-  const contractInstanceAddress = web3.utils.toChecksumAddress(denarisAddress);
+  const contractInstanceAddress = web3.utils.toChecksumAddress(options.denarisAddress);
   const contractInstance = new web3.eth.Contract(contractDenarisAbi, contractInstanceAddress);
 
   let encoded = contractInstance.methods.transfer(options.to, options.tokenAmount).encodeABI();
@@ -271,7 +300,7 @@ const SendDenaris = async (options) => {
 
   var rawTx = {
     from: options.from,
-    to: denarisAddress,
+    to: options.denarisAddress,
     value: "0x00",
     gasLimit: "0x30D40",
     gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
@@ -355,7 +384,7 @@ const AddLiquidityETH = async (options) => {
   const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
 
   const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
-  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+  const contractInstance = new web3.eth.Contract(options.contractRouterAbi, contractInstanceAddress);
 
   const count = await web3.eth.getTransactionCount(options.from);
 
@@ -415,7 +444,7 @@ const RemoveLiquidityETH = async (options) => {
   const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
 
   const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
-  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+  const contractInstance = new web3.eth.Contract(options.contractRouterAbi, contractInstanceAddress);
 
   const count = await web3.eth.getTransactionCount(options.from);
 
@@ -459,7 +488,7 @@ const SwapExactETHForTokens = async (options) => {
   web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
 
   const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
-  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+  const contractInstance = new web3.eth.Contract(options.contractRouterAbi, contractInstanceAddress);
 
   const count = await web3.eth.getTransactionCount(options.from);
 
@@ -499,7 +528,7 @@ const SwapExactTokensForETH = async (options) => {
   const tokenContractInstance = new web3.eth.Contract(contractDenarisAbi, tokenContractInstanceAddress);
 
   const contractInstanceAddress = web3.utils.toChecksumAddress(options.routerAddress);
-  const contractInstance = new web3.eth.Contract(contractPancakeRouterAbi, contractInstanceAddress);
+  const contractInstance = new web3.eth.Contract(options.contractRouterAbi, contractInstanceAddress);
 
   const count = await web3.eth.getTransactionCount(options.from);
 
@@ -565,33 +594,88 @@ const GetAllowance = async (options) => {
   return await tokenContractInstance.methods.allowance(options.from, options.allowance.spender).call();  
 }
 
+const AutomatePoolPair = async (options) => {
+  // GetAllowance(options)
+  try{
+    await CreatePair(options);
+  } catch(err) {
+    console.log("Pair already exists");
+  }
+  let address = await GetPoolPairAddress(options);
+  console.log(`Pair pool address: ${address}`);
+  await AddLiquidityETH(options);
+}
+
+const SetFarmMinterRole = async (options) => {
+  let web3 = new Web3(getNetworkEndpoint(options));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(options.privKey));
+
+  const resourceContractInstanceAddress = web3.utils.toChecksumAddress(options.farmMinterRole.resourceAddress);
+  const resourceContractInstance = new web3.eth.Contract(contractResourceAbi, resourceContractInstanceAddress);
+
+  const count = await web3.eth.getTransactionCount(options.from);
+
+  let contractOptions = {
+    from: options.from,
+    value: "0x00",
+    gasLimit: "0x989680",
+    gasPrice: "0x2540BE400", // default will use web3.eth.getGasPrice(), // 10000000000 (10 gwei)
+    // gasPrice: "0x4A817C800", // default will use web3.eth.getGasPrice(), // 20000000000 (20 gwei)
+    nonce: web3.utils.toHex(count), // default will use web3.eth.getTransactionCount()
+    // chainId: 1, // default will use web3.eth.net.getId()
+  }
+
+  return resourceContractInstance.methods.grantRole(
+    web3.utils.keccak256("MINTER_ROLE"),
+    options.farmMinterRole.farmAddress,
+  ).send(contractOptions)
+  // .once('sending', function(payload){ console.log(payload) })
+  .once('sent', function(payload){ console.log(payload) })
+  // .once('transactionHash', function(hash){ console.log(hash) })
+  // .once('receipt', function(receipt){ console.log(receipt) })
+  // .on('confirmation', function(confNumber, receipt, latestBlockHash){ console.log(confNumber);console.log(receipt);console.log(latestBlockHash); })
+  // .on('error', function(error){ console.log(error) })
+}
+
+const SetAllMinterRoles = async (options) => {
+  for (const f of Object.keys(options.farmMinterRole.farms)){
+    // for (const r of Object.keys(options.farmMinterRole.resources)){
+      options.farmMinterRole.farmAddress=options.farmMinterRole.farms[f];
+      options.farmMinterRole.resourceAddress=options.farmMinterRole.resources[f] // r;
+      let res = await SetFarmMinterRole(options);
+      console.log(res);
+    // }
+  }
+}
+
 const options = {
-  blockchain: "binance",
-  network: "testnet",
+  blockchain: "binance", //"binance",
+  network: "testnet", //"testnet",
   from: myAddress,
   to: testAddress,
   amount: 0,
   tokenAmount: 1000000,
   privKey: myPrivKey,
-  factoryAddress: pancakeFactory,
-  routerAddress: pancakeRouter,
-  tokenA: denarisAddress,
-  tokenB: wbnbAddress,
+  factoryAddress: pancakeFactory, //pancakeFactory,
+  routerAddress: pancakeRouter, //pancakeRouter,
+  contractRouterAbi: contractUniswapV2Router02Abi, //contractUniswapV2Router02Abi || contractPancakeRouterAbi
+  tokenA: denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
+  tokenB: wethAddress, // wbnbAddress - wethAddress
   allowance: {
-    tokenAddress: denarisAddress,
-    spender: pancakeRouter
+    tokenAddress: denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
+    spender: pancakeRouter, // pancakeRouter
   },
   addLiquidityETH: {
-    tokenAddress: denarisAddress,
-    amountETH: 1,
-    amountToken: 100000000000,
-    amountTokenMin: 10000000,
-    amountETHMin: 0.0001,
+    tokenAddress: denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
+    amountETH: 0.1, // (eth)
+    amountToken: "1000000000000000000000", // (wei)
+    amountTokenMin: "100000000000000000000",
+    amountETHMin: 0.01,
     to: myAddress,
     deadline: Date.now() + 60*1000*60*24, // 1 day
   },
   removeLiquidityETH: {
-    tokenAddress: denarisAddress,
+    tokenAddress:  denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
     amountLP: 2082440000000,
     amountTokenMin: 10000,
     amountETHMin: 0.0000000000000001,
@@ -603,8 +687,8 @@ const options = {
     amountOutMin: 100,
     // An array of token addresses. path.length must be >= 2. Pools for each consecutive pair of addresses must exist and have liquidity.
     path: [
-      wbnbAddress,
-      denarisAddress,
+      wethAddress, // wbnbAddress - wethAddress
+      denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
     ],
     to: myAddress,
     deadline: Date.now() + 60*1000*60*24, // 1 day
@@ -612,26 +696,34 @@ const options = {
   swapExactTokensForETH: {
     amountToken: 10000000000,
     amountETHMin: 0.0001,
-    tokenAddress: denarisAddress,
+    tokenAddress: denarisAddressTBNB,
     // An array of token addresses. path.length must be >= 2. Pools for each consecutive pair of addresses must exist and have liquidity.
     path: [
-      denarisAddress,
-      wbnbAddress,
+      denarisAddressTBNB, // denarisAddressTBNB - denarisAddressRinkeby,
+      wethAddress, // wbnbAddress - wethAddress
     ],
     to: myAddress,
     deadline: Date.now() + 60*1000*60*24, // 1 day
-  }
+  },
+  farmMinterRole: {
+    farmAddress: "",
+    resourceAddress: "",
+    farms: tBinanceFarms,
+    resources: tBinanceResources,
+  },
 };
 
 // GetAddressBalance(options)
 // TransferDenaris(options)
 // SendDenaris(options)
 // GetAllowance(options)
-CreatePair(options)
-// GetPoolPairAddress(options) // 0x814346FcAD3c4DB287fc6C1853c840ebE6F17A65
+// CreatePair(options)f
+// GetPoolPairAddress(options) // 0x0a174f9cf22e991565e52243125629448C1d95b3
+// AutomatePoolPair(options)
 // AddLiquidityETH(options)
 // RemoveLiquidityETH(options)
 // SwapExactETHForTokens(options)
 // SwapExactTokensForETH(options)
+SetAllMinterRoles(options)
 .then(console.log)
 .catch(console.log);
